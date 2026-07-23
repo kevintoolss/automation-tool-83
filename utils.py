@@ -1,27 +1,38 @@
 import time
-import requests
-from requests.exceptions import RequestException
+from functools import wraps
 
-def retry_request(url, max_retries=5, delay=2):
-    """Perform a GET request with retry logic.
 
-    Args:
-        url (str): The URL to make the request to.
-        max_retries (int): Maximum number of retry attempts.
-        delay (int): Delay between retries in seconds.
+def execution_time(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        start_time = time.time()
+        result = func(*args, **kwargs)
+        end_time = time.time()
+        print(f"{func.__name__} executed in {end_time - start_time:.4f} seconds")
+        return result
+    return wrapper
 
-    Returns:
-        Response: The response object from the request.
-    """
-    attempts = 0
-    while attempts < max_retries:
-        try:
-            response = requests.get(url)
-            response.raise_for_status()  # Raise an error for bad responses
-            return response
-        except RequestException as e:
-            attempts += 1
-            print(f'Attempt {attempts} failed: {e}')
-            if attempts < max_retries:
-                time.sleep(delay)  # Wait before retrying
-    raise Exception(f'Max retries exceeded for URL: {url}')
+
+@execution_time
+def optimize_data_processing(data):
+    optimized_data = []
+    for item in data:
+        # Simulate a processing step
+        processed_item = item * 2  # Example operation
+        optimized_data.append(processed_item)
+    return optimized_data
+
+
+def filter_data(data, threshold):
+    return [item for item in data if item > threshold]
+
+
+def main():
+    data = list(range(10000))
+    optimized_data = optimize_data_processing(data)
+    filtered_data = filter_data(optimized_data, 5000)
+    print(filtered_data)
+
+
+if __name__ == "__main__":
+    main()
