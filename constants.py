@@ -1,29 +1,27 @@
 from typing import Final
 
-# Define constants used in the application
+# Define constants used throughout the automation tool
 
-# Maximum allowed connections to the server
-MAX_CONNECTIONS: Final[int] = 100
+# Base URL for the automation service
+SERVICE_BASE_URL: Final[str] = 'https://api.automationtool.com/'
 
-# Timeout settings in seconds
-TIMEOUT: Final[int] = 30
+# HTTP status codes
+HTTP_OK: Final[int] = 200
+HTTP_NOT_FOUND: Final[int] = 404
+HTTP_INTERNAL_ERROR: Final[int] = 500
 
-# API endpoint for fetching data
-API_ENDPOINT: Final[str] = 'https://api.example.com/data'
+# Timeouts in seconds
+DEFAULT_TIMEOUT: Final[int] = 30
 
-# Default user role
-DEFAULT_USER_ROLE: Final[str] = 'guest'
+# Default configuration values
+DEFAULT_RETRY_ATTEMPTS: Final[int] = 5
+DEFAULT_RETRY_DELAY: Final[int] = 2  # in seconds
 
-# Error message for connection failures
-CONNECTION_ERROR_MESSAGE: Final[str] = 'Unable to connect to the server. Please try again later.'
+# Supported file types for processing
+SUPPORTED_FILE_TYPES: Final[list[str]] = ['.csv', '.json', '.xml']
 
-# Success message for successful operations
-SUCCESS_MESSAGE: Final[str] = 'Operation completed successfully.'
-
-# Define application version
-APPLICATION_VERSION: Final[str] = '1.0.0'
-
-# Application name
-APPLICATION_NAME: Final[str] = 'Automation Tool 83'
-
-# Additional configuration constants can be added as needed.
+# Error messages
+ERROR_MESSAGES: Final[dict[str, str]] = {
+    'file_not_supported': 'The file type is not supported.',
+    'service_unavailable': 'The automation service is currently unavailable.',
+}
