@@ -1,44 +1,37 @@
-from typing import Dict, Any
+import json
+import os
 
-class Config:
-    """
-    A class to hold configuration settings.
-    """
+DEFAULT_CONFIG = {
+    'setting_1': 'default_value_1',
+    'setting_2': 'default_value_2',
+    'setting_3': 10,
+}
 
-    def __init__(self, **kwargs: Any) -> None:
-        """
-        Initializes the configuration with keyword arguments.
+class ConfigLoader:
+    def __init__(self, config_file='config.json'):
+        self.config_file = config_file
+        self.config = {}
+        self.load_configuration()
+
+    def load_configuration(self):
+        # Load defaults first
+        self.config = DEFAULT_CONFIG.copy()
         
-        Args:
-            **kwargs: Arbitrary keyword arguments representing configuration options.
-        """
-        self.settings: Dict[str, Any] = kwargs
+        # Check if the configuration file exists
+        if os.path.isfile(self.config_file):
+            with open(self.config_file, 'r') as file:
+                user_config = json.load(file)
+                self.config.update(user_config)
 
-    def get(self, key: str, default: Any = None) -> Any:
-        """
-        Retrieves the value for a given key from the configuration.
-        
-        Args:
-            key (str): The key of the setting to retrieve.
-            default (Any): The default value to return if the key does not exist.
-        
-        Returns:
-            Any: The value associated with the key, or the default value if the key is not found.
-        """
-        return self.settings.get(key, default)
+    def get(self, key, default=None):
+        # Get the value of a setting, return default if not found
+        return self.config.get(key, default)
 
-    def set(self, key: str, value: Any) -> None:
-        """
-        Sets the value for a given key in the configuration.
+    def set(self, key, value):
+        # Set a specific configuration value
+        self.config[key] = value
         
-        Args:
-            key (str): The key of the setting to set.
-            value (Any): The value to associate with the key.
-        """
-        self.settings[key] = value
-
-    def __repr__(self) -> str:
-        """
-        Returns a string representation of the configuration settings.
-        """
-        return f"Config(settings={self.settings})"
+    def save(self):
+        # Save the current configuration to a file
+        with open(self.config_file, 'w') as file:
+            json.dump(self.config, file, indent=4)
