@@ -1,38 +1,26 @@
 import time
-from functools import wraps
+import requests
 
+class NetworkError(Exception):
+    pass
 
-def execution_time(func):
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        start_time = time.time()
-        result = func(*args, **kwargs)
-        end_time = time.time()
-        print(f"{func.__name__} executed in {end_time - start_time:.4f} seconds")
-        return result
-    return wrapper
+def retry_request(url, max_retries=3, delay=2):
+    retries = 0
+    while retries < max_retries:
+        try:
+            response = requests.get(url)
+            response.raise_for_status()  # Raise an error for bad status
+            return response.json()  # Return JSON response if successful
+        except requests.exceptions.RequestException as e:
+            retries += 1
+            if retries == max_retries:
+                raise NetworkError(f'Failed to retrieve data after {max_retries} attempts: {str(e)}')
+            time.sleep(delay)  # Wait before retrying
 
-
-@execution_time
-def optimize_data_processing(data):
-    optimized_data = []
-    for item in data:
-        # Simulate a processing step
-        processed_item = item * 2  # Example operation
-        optimized_data.append(processed_item)
-    return optimized_data
-
-
-def filter_data(data, threshold):
-    return [item for item in data if item > threshold]
-
-
-def main():
-    data = list(range(10000))
-    optimized_data = optimize_data_processing(data)
-    filtered_data = filter_data(optimized_data, 5000)
-    print(filtered_data)
-
-
-if __name__ == "__main__":
-    main()
+# Example usage
+if __name__ == '__main__':
+    try:
+        data = retry_request('https://api.example.com/data')
+        print(data)
+    except NetworkError as ne:
+        print(ne)
