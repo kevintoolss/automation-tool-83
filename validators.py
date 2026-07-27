@@ -1,17 +1,1 @@
-def validate_input(user_input):
-    if not isinstance(user_input, str):
-        raise ValueError('Input must be a string.')  
-    if not user_input:
-        raise ValueError('Input cannot be empty.')  
-    if len(user_input) > 100:
-        raise ValueError('Input cannot exceed 100 characters.')  
-    return True
-
-if __name__ == '__main__':
-    inputs = ['valid input', '', 123, 'this is a very long input string that exceeds the maximum limit of one hundred characters which is not allowed']
-    for inp in inputs:
-        try:
-            validate_input(inp)
-            print(f"'{inp}' is a valid input.")
-        except ValueError as e:
-            print(f"'{inp}' - {e}")
+def is_valid_input(user_input):\n    if not isinstance(user_input, str):\n        return False\n    if len(user_input.strip()) == 0:\n        return False\n    return True\n\ndef process_input(input_data):\n    if is_valid_input(input_data):\n        return f'Processed: {input_data}'\n    else:\n        raise ValueError('Invalid input provided')\n\ndef main_loop():\n    while True:\n        user_input = input('Enter your data (or type exit to quit): ')\n        if user_input.lower() == 'exit':\n            break\n        try:\n            result = process_input(user_input)\n            print(result)\n        except ValueError as e:\n            print(e)\n\nif __name__ == '__main__':\n    main_loop()
