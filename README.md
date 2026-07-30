@@ -1,55 +1,34 @@
-# Automation Tool 83
+# automation-tool-83
 
-Automation Tool 83 is a versatile Python-based solution designed to simplify repetitive tasks and streamline workflows. With an intuitive interface and robust functionality, this tool empowers users to automate actions across various platforms with ease.
+Automation-tool-83 is a versatile Python-based automation tool designed to streamline daily tasks and enhance productivity. With a sleek and intuitive command-line interface, it allows users to automate repetitive processes effortlessly.
 
 ## Features
-
-- **Web Automation**: Seamlessly interact with web pages using Selenium, enabling tasks such as form submission, data scraping, and click automation.
-- **Task Scheduling**: Schedule scripts to run at specified times using the built-in job scheduler, ensuring that important tasks are executed without manual intervention.
-- **File Management**: Effortlessly automate file operations such as moving, renaming, or deleting files within specified directories, enhancing organizational efficiency.
-- **Email Notifications**: Get instant alerts on task completions or failures by integrating email notifications, keeping you informed no matter where you are.
+- **File Management**: Easily organize, rename, and delete files in bulk with customizable rules.
+- **Web Scraping**: Extract relevant data from websites, saving it in CSV or JSON formats without manual intervention.
+- **Task Scheduling**: Schedule and run automation tasks at specified intervals using built-in cron-like functionality.
+- **Notification System**: Receive real-time notifications via email or Slack when tasks are completed or if errors occur.
 
 ## Installation
+To install automation-tool-83, ensure you have Python 3.7+ and pip installed, then execute the following commands:
 
-To get started with Automation Tool 83, follow these simple steps:
-
-1. Clone the repository:
-
-   ```bash
-   git clone https://github.com/yourusername/automation-tool-83.git
-   ```
-
-2. Navigate to the project directory:
-
-   ```bash
-   cd automation-tool-83
-   ```
-
-3. Install the necessary dependencies:
-
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-## Basic Usage
-
-To run a simple automation script, create a file named `example.py` with the following code:
-
-```python
-from automation_tool import TaskScheduler
-
-def my_task():
-    print("Automating a task!")
-
-scheduler = TaskScheduler()
-scheduler.add_task(my_task, schedule='daily')
-scheduler.run()
+```bash
+git clone https://github.com/Developer/automation-tool-83.git
+cd automation-tool-83
+pip install -r requirements.txt
 ```
 
-This example sets up a task that prints a message every day. Customize the task function and scheduling parameters to suit your requirements.
+## Basic Usage
+After installation, you can run the tool using the command line. For example, to start a file organization task, use:
+
+```bash
+python automation.py organize --path /path/to/files --rules "rename:prefix_new_name" --delete
+```
+
+This command will rename files in the specified directory by adding a prefix and delete any files that meet certain criteria, automating a typically tedious process.
 
 ## License
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
-![MIT License](https://img.shields.io/badge/license-MIT-blue.svg)
+This project is licensed under the MIT License, enabling you to use, copy, modify, and distribute the software with ease. Contributions and enhancements are always welcome!
 
-This project is licensed under the MIT License. For more details, please see the LICENSE file.
+For more details on usage and advanced features, please refer to the documentation provided in the `docs` folder.
