@@ -1,28 +1,28 @@
-def validate_input(data):
-    if not isinstance(data, dict):
-        raise ValueError('Input must be a dictionary')
-    if 'name' not in data or not isinstance(data['name'], str):
-        raise ValueError('Name is required and must be a string')
-    if 'age' in data:
-        if not isinstance(data['age'], int) or data['age'] < 0:
-            raise ValueError('Age must be a non-negative integer')
-    return True
+def is_valid_email(email):
+    """Check if the provided email is valid."""
+    import re
+    regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+    return re.match(regex, email) is not None
 
 
-def main_processing_loop(inputs):
-    for input_data in inputs:
-        try:
-            validate_input(input_data)
-            # Process the valid input
-            print(f'Processing: {input_data}')
-        except ValueError as e:
-            print(f'Error: {e}')
+def is_non_empty_string(value):
+    """Check if the provided value is a non-empty string."""
+    return isinstance(value, str) and bool(value.strip())
 
-# Example usage
-if __name__ == '__main__':
-    sample_inputs = [
-        {'name': 'Alice', 'age': 30},
-        {'name': 'Bob', 'age': -5},
-        {'name': 'Charlie'}
-    ]
-    main_processing_loop(sample_inputs)
+
+def is_positive_integer(value):
+    """Check if the provided value is a positive integer."""
+    return isinstance(value, int) and value > 0
+
+
+def is_valid_url(url):
+    """Check if the provided URL is valid."""
+    import re
+    regex = r'^(http|https)://[a-zA-Z0-9.-]+(\.[a-zA-Z]{2,})?$'
+    return re.match(regex, url) is not None
+
+
+def is_in_range(value, min_value, max_value):
+    """Check if the provided value is within a given range."""
+    return isinstance(value, (int, float)) and min_value <= value <= max_value
+
