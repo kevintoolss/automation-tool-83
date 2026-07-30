@@ -1,27 +1,33 @@
 import json
-from typing import Any, Dict, List, Union
+from typing import Any, Dict
 
-def load_json(file_path: str) -> Union[Dict[str, Any], List[Any]]:
-    """Load JSON data from a file."""
-    with open(file_path, 'r') as file:
-        return json.load(file)
+class CustomError(Exception):
+    pass
 
-def save_json(data: Union[Dict[str, Any], List[Any]], file_path: str) -> None:
-    """Save data as JSON to a file."""
-    with open(file_path, 'w') as file:
-        json.dump(data, file, indent=4)
+def process_data(data: Dict[str, Any]) -> Dict[str, Any]:
+    if not isinstance(data, dict):
+        raise CustomError('Input is not a dictionary')
+    try:
+        processed = {key: value for key, value in data.items() if value is not None}
+        if not processed:
+            raise CustomError('No valid data to process')
+    except Exception as e:
+        raise CustomError(f'An error occurred while processing data: {e}') from e
+    return processed
 
-def merge_dicts(dict1: Dict[str, Any], dict2: Dict[str, Any]) -> Dict[str, Any]:
-    """Merge two dictionaries, with dict2 overwriting dict1 keys."""
-    merged = dict1.copy()
-    merged.update(dict2)
-    return merged
+def load_and_process_json(file_path: str) -> Dict[str, Any]:
+    try:
+        with open(file_path, 'r') as file:
+            data = json.load(file)
+    except FileNotFoundError:
+        raise CustomError(f'File not found: {file_path}')
+    except json.JSONDecodeError:
+        raise CustomError('Invalid JSON format')
+    return process_data(data)
 
 if __name__ == '__main__':
-    sample_data = {'name': 'Automation Tool', 'version': 1.0}
-    save_json(sample_data, 'data.json')
-    loaded_data = load_json('data.json')
-    print(loaded_data)
-    additional_data = {'description': 'A tool for automation.'}
-    combined_data = merge_dicts(loaded_data, additional_data)
-    print(combined_data)
+    try:
+        result = load_and_process_json('data.json')
+        print(result)
+    except CustomError as e:
+        print(f'Error: {e}')
