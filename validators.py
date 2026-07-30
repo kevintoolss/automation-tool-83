@@ -1,28 +1,29 @@
-def is_valid_email(email):
-    """Check if the provided email is valid."""
-    import re
-    regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
-    return re.match(regex, email) is not None
+import time
+import requests
 
+class NetworkError(Exception):
+    pass
 
-def is_non_empty_string(value):
-    """Check if the provided value is a non-empty string."""
-    return isinstance(value, str) and bool(value.strip())
+def retry_request(url, retries=5, delay=2):
+    """Makes a GET request to the specified URL with retry logic.
+    Retries the request if a network error occurs.
+    """
+    attempt = 0
+    while attempt < retries:
+        try:
+            response = requests.get(url)
+            response.raise_for_status()  # Raise an error for bad responses
+            return response.json()  # Return JSON content if the request is successful
+        except requests.exceptions.RequestException as e:
+            attempt += 1
+            if attempt == retries:
+                raise NetworkError(f'Failed to retrieve data from {url} after {retries} attempts') from e
+            time.sleep(delay)  # Wait before the next attempt
 
-
-def is_positive_integer(value):
-    """Check if the provided value is a positive integer."""
-    return isinstance(value, int) and value > 0
-
-
-def is_valid_url(url):
-    """Check if the provided URL is valid."""
-    import re
-    regex = r'^(http|https)://[a-zA-Z0-9.-]+(\.[a-zA-Z]{2,})?$'
-    return re.match(regex, url) is not None
-
-
-def is_in_range(value, min_value, max_value):
-    """Check if the provided value is within a given range."""
-    return isinstance(value, (int, float)) and min_value <= value <= max_value
-
+# Example usage (commented out)
+# if __name__ == '__main__':
+#     try:
+#         data = retry_request('https://api.example.com/data')
+#         print(data)
+#     except NetworkError as ne:
+#         print(str(ne))
