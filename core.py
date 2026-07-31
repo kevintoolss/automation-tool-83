@@ -1,40 +1,33 @@
-from typing import List, Dict
+import requests
+import time
+from requests.exceptions import RequestException
 
-
-def process_data(data: List[Dict[str, int]]) -> List[int]:
-    """Processes a list of dictionaries and returns a list of result integers.
-
-    Each dictionary is expected to contain numeric values, and the function computes their sum.
-
-    Args:
-        data (List[Dict[str, int]]): A list of dictionaries containing numeric values.
-
-    Returns:
-        List[int]: A list of integers representing the sums of the values in each dictionary.
+def retry_request(url, max_retries=3, delay=2):
     """
-    results = []
+    Perform a GET request and retry on failure.
     
-    for item in data:
-        if not isinstance(item, dict):
-            raise ValueError('Each item must be a dictionary.')
-        results.append(sum(item.values()))
-    return results
-
-
-def main() -> None:
-    """Main function to demonstrate the processing of data.
-
-    This function serves as an entry point for the script and can be modified to process
-    real input data.
+    :param url: The URL to send the request to.
+    :param max_retries: Max number of retries for the request.
+    :param delay: Delay in seconds between retries.
+    :return: Response object on success or None on failure.
     """
-    sample_data = [
-        {'a': 1, 'b': 2},
-        {'x': 10, 'y': 20, 'z': 5},
-        {'m': 0, 'n': -1},
-    ]
-    processed_results = process_data(sample_data)
-    print(processed_results)  # Output the processed results before returning.
+    attempt = 0
+    while attempt < max_retries:
+        try:
+            response = requests.get(url)
+            response.raise_for_status()  # Raise an HTTPError for bad responses
+            return response
+        except RequestException as e:
+            attempt += 1
+            print(f"Attempt {attempt} failed: {e}")
+            if attempt < max_retries:
+                time.sleep(delay)
+    return None  
 
-
-if __name__ == '__main__':
-    main()
+# Example usage of retry_request
+if __name__ == "__main__":
+    result = retry_request('https://example.com/api/data')
+    if result is not None:
+        print("Request succeeded:", result.json())
+    else:
+        print("Request failed after retries."),
