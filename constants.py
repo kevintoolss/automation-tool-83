@@ -1,27 +1,25 @@
-from typing import Final
+import time
+import random
 
-# Define constants used throughout the automation tool
+class RetryConfig:
+    def __init__(self, max_attempts=5, backoff_factor=1, jitter=True):
+        self.max_attempts = max_attempts
+        self.backoff_factor = backoff_factor
+        self.jitter = jitter
 
-# Base URL for the automation service
-SERVICE_BASE_URL: Final[str] = 'https://api.automationtool.com/'
+    def backoff_time(self, attempt):
+        # Calculate backoff time with optional jitter
+        backoff = self.backoff_factor * (2 ** (attempt - 1))
+        if self.jitter:
+            backoff += random.uniform(0, 1)
+        return backoff
 
-# HTTP status codes
-HTTP_OK: Final[int] = 200
-HTTP_NOT_FOUND: Final[int] = 404
-HTTP_INTERNAL_ERROR: Final[int] = 500
-
-# Timeouts in seconds
-DEFAULT_TIMEOUT: Final[int] = 30
-
-# Default configuration values
-DEFAULT_RETRY_ATTEMPTS: Final[int] = 5
-DEFAULT_RETRY_DELAY: Final[int] = 2  # in seconds
-
-# Supported file types for processing
-SUPPORTED_FILE_TYPES: Final[list[str]] = ['.csv', '.json', '.xml']
-
-# Error messages
-ERROR_MESSAGES: Final[dict[str, str]] = {
-    'file_not_supported': 'The file type is not supported.',
-    'service_unavailable': 'The automation service is currently unavailable.',
-}
+def retry_operation(operation, *args, **kwargs):
+    retries = RetryConfig()
+    for attempt in range(1, retries.max_attempts + 1):
+        try:
+            return operation(*args, **kwargs)
+        except Exception as e:
+            if attempt == retries.max_attempts:
+                raise e  # Raise final exception
+            time.sleep(retries.backoff_time(attempt))
