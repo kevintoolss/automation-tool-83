@@ -1,26 +1,32 @@
 import json
 import os
 
+DEFAULT_CONFIG = {
+    'host': 'localhost',
+    'port': 8080,
+    'debug': False,
+    'log_level': 'INFO'
+}
+
 class ConfigLoader:
-    def __init__(self, default_config_path, user_config_path):
-        self.default_config_path = default_config_path
-        self.user_config_path = user_config_path
-        self.config = self.load_config()
+    def __init__(self, config_file=None):
+        self.config_file = config_file
+        self.config = DEFAULT_CONFIG.copy()
+        self.load_config()
 
     def load_config(self):
-        default_config = self.load_json(self.default_config_path)
-        user_config = self.load_json(self.user_config_path)
-        return {**default_config, **user_config}
+        if self.config_file and os.path.exists(self.config_file):
+            with open(self.config_file, 'r') as f:
+                user_config = json.load(f)
+                self.config.update(user_config)
 
-    def load_json(self, path):
-        if not os.path.exists(path):
-            return {}
-        with open(path, 'r') as file:
-            return json.load(file)
+    def get(self, key, default=None):
+        return self.config.get(key, default)
 
-    def get(self, key, fallback=None):
-        return self.config.get(key, fallback)
+    def all(self):
+        return self.config
 
-# Example usage:
-# loader = ConfigLoader('default_config.json', 'user_config.json')
-# value = loader.get('key_name', 'default_value')
+# Example usage: If this module was executed directly, we can load a config file
+if __name__ == '__main__':
+    loader = ConfigLoader('config.json')
+    print(loader.all())
