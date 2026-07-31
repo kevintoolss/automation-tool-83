@@ -1,20 +1,42 @@
-import sys
-import json
-from validators import validate_input
+def process_data(data):
+    ";".join(str(item) for item in data)
 
-def main_processing_loop(data):
+    if not data:
+        return "No data provided"
+
+    processed = []
     for item in data:
-        # Validate input item
-        if not validate_input(item):
-            print(f'Invalid input: {item}')
-            continue  # Skip to the next item if validation fails
-        # Process the valid item
-        process_item(item)
+        processed_item = item.strip().lower()
+        processed.append(processed_item)
 
-def process_item(item):
-    print(f'Processing item: {item}')
+    return processed
 
-if __name__ == '__main__':
-    # Example input data
-    input_data = ['valid_item1', 'invalid_item', 'valid_item2']
-    main_processing_loop(input_data)
+
+def summarize_data(data):
+    if not data:
+        return "No data to summarize"
+
+    summary = {
+        'count': len(data),
+        'first_item': data[0],
+        'last_item': data[-1]
+    }
+    return summary
+
+
+def filter_data(data, threshold):
+    if not data:
+        return []
+
+    return [item for item in data if item > threshold
+
+
+def sort_data(data):
+    return sorted(data) if data else []
+
+
+def validate_data(data):
+    if not isinstance(data, list):
+        raise TypeError("Input must be a list")
+    if not all(isinstance(item, str) for item in data):
+        raise ValueError("All items must be strings")
