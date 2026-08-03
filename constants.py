@@ -1,25 +1,24 @@
-import time
-import random
+import os
 
-class RetryConfig:
-    def __init__(self, max_attempts=5, backoff_factor=1, jitter=True):
-        self.max_attempts = max_attempts
-        self.backoff_factor = backoff_factor
-        self.jitter = jitter
+# Define global constants
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-    def backoff_time(self, attempt):
-        # Calculate backoff time with optional jitter
-        backoff = self.backoff_factor * (2 ** (attempt - 1))
-        if self.jitter:
-            backoff += random.uniform(0, 1)
-        return backoff
+# API constants
+API_TIMEOUT = 30  # seconds
+API_RETRIES = 3  # number of retry attempts
 
-def retry_operation(operation, *args, **kwargs):
-    retries = RetryConfig()
-    for attempt in range(1, retries.max_attempts + 1):
-        try:
-            return operation(*args, **kwargs)
-        except Exception as e:
-            if attempt == retries.max_attempts:
-                raise e  # Raise final exception
-            time.sleep(retries.backoff_time(attempt))
+# File processing constants
+MAX_FILE_SIZE = 10485760  # 10 MB in bytes
+SUPPORTED_FILE_TYPES = ['.txt', '.csv', '.json']
+
+# Logging constants
+LOGGING_LEVEL = 'DEBUG'
+LOGGING_FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+
+# Database constants
+DB_CONNECTION_STRING = 'sqlite:///mydatabase.db'
+DB_TIMEOUT = 5  # seconds
+
+# Miscellaneous constants
+DEFAULT_LANGUAGE = 'en'
+ITEMS_PER_PAGE = 10
