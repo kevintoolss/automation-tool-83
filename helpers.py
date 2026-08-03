@@ -1,39 +1,48 @@
-
-import json
-from typing import Any, Dict, List, Union
-
-
-def flatten_dict(nested_dict: Dict[str, Any], parent_key: str = '', sep: str = '.') -> Dict[str, Any]:
-    """Flatten a nested dictionary."""
-    items = []
-    for k, v in nested_dict.items():
-        new_key = f"{parent_key}{sep}{k}" if parent_key else k
-        if isinstance(v, dict):
-            items.extend(flatten_dict(v, new_key, sep=sep).items())
-        else:
-            items.append((new_key, v))
-    return dict(items)
+def read_file(file_path):
+    """
+    Reads the content of a file and returns it as a string.
+    :param file_path: Path to the file to be read.
+    :return: Content of the file as a string.
+    """
+    with open(file_path, 'r') as file:
+        return file.read()
 
 
-def read_json_file(file_path: str) -> Union[Dict[str, Any], None]:
-    """Read a JSON file and return its contents."""
-    try:
-        with open(file_path, 'r', encoding='utf-8') as f:
-            return json.load(f)
-    except (FileNotFoundError, json.JSONDecodeError) as e:
-        print(f'Error reading {file_path}: {e}')  # Log the error
-        return None
+def write_file(file_path, content):
+    """
+    Writes the provided content to a file.
+    :param file_path: Path to the file where content will be written.
+    :param content: Content to be written to the file.
+    """
+    with open(file_path, 'w') as file:
+        file.write(content)
 
 
-def write_json_file(file_path: str, data: Union[Dict[str, Any], List[Any]]) -> None:
-    """Write data to a JSON file."""
-    with open(file_path, 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
+def append_to_file(file_path, content):
+    """
+    Appends the provided content to an existing file.
+    :param file_path: Path to the file where content will be appended.
+    :param content: Content to be appended to the file.
+    """
+    with open(file_path, 'a') as file:
+        file.write(content)
 
 
-def merge_dicts(*dicts: Dict[str, Any]) -> Dict[str, Any]:
-    """Merge multiple dictionaries into one."""
-    merged = {}
-    for d in dicts:
-        merged.update(d)
-    return merged
+def read_lines(file_path):
+    """
+    Reads the content of a file line by line.
+    :param file_path: Path to the file to be read.
+    :return: List of lines from the file.
+    """
+    with open(file_path, 'r') as file:
+        return file.readlines()
+
+
+def is_file_exists(file_path):
+    """
+    Checks if a file exists at the specified path.
+    :param file_path: Path to the file.
+    :return: True if the file exists, otherwise False.
+    """
+    import os
+    return os.path.isfile(file_path)
