@@ -5,29 +5,22 @@ class CustomError(Exception):
     pass
 
 def process_data(data: Dict[str, Any]) -> Dict[str, Any]:
-    if not isinstance(data, dict):
-        raise CustomError('Input is not a dictionary')
     try:
-        processed = {key: value for key, value in data.items() if value is not None}
-        if not processed:
-            raise CustomError('No valid data to process')
+        if not isinstance(data, dict):
+            raise CustomError('Input must be a dictionary')
+        if 'key' not in data:
+            raise CustomError('Missing required key')
+        # Simulating data processing
+        result = {'status': 'success', 'value': data['key'] * 2}
+        return result
+    except TypeError:
+        raise CustomError('Type error during processing')
+    except CustomError as e:
+        return {'error': str(e)}
     except Exception as e:
-        raise CustomError(f'An error occurred while processing data: {e}') from e
-    return processed
-
-def load_and_process_json(file_path: str) -> Dict[str, Any]:
-    try:
-        with open(file_path, 'r') as file:
-            data = json.load(file)
-    except FileNotFoundError:
-        raise CustomError(f'File not found: {file_path}')
-    except json.JSONDecodeError:
-        raise CustomError('Invalid JSON format')
-    return process_data(data)
+        return {'error': 'An unexpected error occurred: ' + str(e)}
 
 if __name__ == '__main__':
-    try:
-        result = load_and_process_json('data.json')
-        print(result)
-    except CustomError as e:
-        print(f'Error: {e}')
+    sample_data = {'key': 10}
+    response = process_data(sample_data)
+    print(json.dumps(response, indent=4))
