@@ -1,38 +1,45 @@
 import logging
 
-# Configure the logging settings
+# Configure logging settings
 logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
+    level=logging.DEBUG,
+    format='%(asctime)s | %(levelname)s | %(message)s',
     handlers=[
         logging.FileHandler('app.log'),
         logging.StreamHandler()
     ]
 )
 
-# Create a logger instance
-logger = logging.getLogger(__name__)
+class Logger:
+    def __init__(self, name):
+        self.logger = logging.getLogger(name)
 
-def log_info(message):
-    """Log an info message."""
-    logger.info(message)
+    def debug(self, message):
+        try:
+            self.logger.debug(message)
+        except Exception as e:
+            self.logger.error('Error logging debug message: %s', e)
 
+    def info(self, message):
+        try:
+            self.logger.info(message)
+        except Exception as e:
+            self.logger.error('Error logging info message: %s', e)
 
-def log_warning(message):
-    """Log a warning message."""
-    logger.warning(message)
+    def warning(self, message):
+        try:
+            self.logger.warning(message)
+        except Exception as e:
+            self.logger.error('Error logging warning message: %s', e)
 
+    def error(self, message):
+        try:
+            self.logger.error(message)
+        except Exception as e:
+            self.logger.error('Error logging error message: %s', e)
 
-def log_error(message):
-    """Log an error message."""
-    logger.error(message)
-
-
-def log_debug(message):
-    """Log a debug message."""
-    logger.debug(message)
-
-
-def log_exception(exception):
-    """Log an exception with traceback."""
-    logger.exception(exception)
+    def critical(self, message):
+        try:
+            self.logger.critical(message)
+        except Exception as e:
+            self.logger.error('Error logging critical message: %s', e)
