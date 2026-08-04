@@ -1,38 +1,33 @@
 import json
+import os
+from typing import Any, Dict
 
 
-def load_json(file_path):
-    """Load JSON data from a file."""
-    try:
-        with open(file_path, 'r') as file:
-            data = json.load(file)
-            return data
-    except (FileNotFoundError, json.JSONDecodeError) as e:
-        print(f"Error loading JSON: {e}")
-        return None
+def load_json(file_path: str) -> Dict[str, Any]:
+    """Loads a JSON file and returns its content as a dictionary."""
+    if not os.path.isfile(file_path):
+        raise FileNotFoundError(f"The file {file_path} does not exist.")
+    with open(file_path, 'r', encoding='utf-8') as file:
+        return json.load(file)
 
 
-def save_json(file_path, data):
-    """Save data to a JSON file."""
-    try:
-        with open(file_path, 'w') as file:
-            json.dump(data, file, indent=4)
-    except IOError as e:
-        print(f"Error saving JSON: {e}")
+def save_json(file_path: str, data: Dict[str, Any]) -> None:
+    """Saves a dictionary as a JSON file."""
+    with open(file_path, 'w', encoding='utf-8') as file:
+        json.dump(data, file, ensure_ascii=False, indent=4)
 
 
-def flatten_dict(nested_dict, parent_key='', sep='_'):
-    """Flatten a nested dictionary."""
-    items = []
-    for key, value in nested_dict.items():
-        new_key = f"{parent_key}{sep}{key}" if parent_key else key
-        if isinstance(value, dict):
-            items.extend(flatten_dict(value, new_key, sep=sep).items())
+def merge_dicts(dict1: Dict[str, Any], dict2: Dict[str, Any]) -> Dict[str, Any]:
+    """Merges two dictionaries recursively."""
+    result = dict1.copy()  
+    for key, value in dict2.items():
+        if key in result and isinstance(result[key], dict) and isinstance(value, dict):
+            result[key] = merge_dicts(result[key], value)
         else:
-            items.append((new_key, value))
-    return dict(items)
+            result[key] = value
+    return result
 
 
-def filter_dict(input_dict, keys):
-    """Filter a dictionary by a list of keys."""
-    return {key: input_dict[key] for key in keys if key in input_dict}
+def extract_keys(data: Dict[str, Any], keys: list) -> Dict[str, Any]:
+    """Extracts specified keys from a dictionary, returning a new dictionary."""
+    return {key: data[key] for key in keys if key in data} 
