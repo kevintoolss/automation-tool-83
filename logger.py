@@ -1,45 +1,21 @@
 import logging
+from logging.handlers import RotatingFileHandler
 
-# Configure logging settings
-logging.basicConfig(
-    level=logging.DEBUG,
-    format='%(asctime)s | %(levelname)s | %(message)s',
-    handlers=[
-        logging.FileHandler('app.log'),
-        logging.StreamHandler()
-    ]
-)
+def setup_logger(log_file='app.log', max_bytes=5*1024*1024, backup_count=3):
+    """
+    Sets up a logger with rotation.
+    :param log_file: Path to the log file.
+    :param max_bytes: Maximum file size in bytes before rotation.
+    :param backup_count: Number of backup files to keep.
+    """
+    logger = logging.getLogger(__name__)
+    logger.setLevel(logging.INFO)
 
-class Logger:
-    def __init__(self, name):
-        self.logger = logging.getLogger(name)
+    # Create a rotating file handler
+    handler = RotatingFileHandler(log_file, maxBytes=max_bytes, backupCount=backup_count)
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
 
-    def debug(self, message):
-        try:
-            self.logger.debug(message)
-        except Exception as e:
-            self.logger.error('Error logging debug message: %s', e)
-
-    def info(self, message):
-        try:
-            self.logger.info(message)
-        except Exception as e:
-            self.logger.error('Error logging info message: %s', e)
-
-    def warning(self, message):
-        try:
-            self.logger.warning(message)
-        except Exception as e:
-            self.logger.error('Error logging warning message: %s', e)
-
-    def error(self, message):
-        try:
-            self.logger.error(message)
-        except Exception as e:
-            self.logger.error('Error logging error message: %s', e)
-
-    def critical(self, message):
-        try:
-            self.logger.critical(message)
-        except Exception as e:
-            self.logger.error('Error logging critical message: %s', e)
+    # Add the handler to the logger
+    logger.addHandler(handler)
+    return logger
