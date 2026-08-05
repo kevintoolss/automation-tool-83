@@ -1,20 +1,40 @@
 import json
-from typing import Any, Dict
+import os
 
 DEFAULT_CONFIG = {
     'host': 'localhost',
     'port': 8080,
     'debug': False,
-    'log_level': 'INFO',
+    'database': {
+        'user': 'admin',
+        'password': 'password',
+        'name': 'app_db'
+    }
 }
 
-def load_config(file_path: str) -> Dict[str, Any]:
-    """Load configuration from a JSON file, using defaults if necessary."""
-    try:
-        with open(file_path, 'r') as file:
-            config = json.load(file)
-    except FileNotFoundError:
-        return DEFAULT_CONFIG  # Return defaults if file not found
-    except json.JSONDecodeError:
-        return DEFAULT_CONFIG  # Return defaults on JSON decode error
-    return {**DEFAULT_CONFIG, **config}  # Merge defaults with loaded config
+class ConfigLoader:
+    def __init__(self, config_file=None):
+        self.config_file = config_file
+        self.config = DEFAULT_CONFIG.copy()
+        self.load_config()
+
+    def load_config(self):
+        if self.config_file and os.path.isfile(self.config_file):
+            with open(self.config_file, 'r') as file:
+                user_config = json.load(file)
+                self.config.update(user_config)
+
+    def get(self, key, default=None):
+        return self.config.get(key, default)
+
+    def set(self, key, value):
+        self.config[key] = value
+
+    def save(self):
+        if self.config_file:
+            with open(self.config_file, 'w') as file:
+                json.dump(self.config, file, indent=4)
+
+if __name__ == '__main__':
+    config_loader = ConfigLoader('config.json')
+    print(config_loader.config)
