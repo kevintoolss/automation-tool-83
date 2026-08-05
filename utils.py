@@ -1,33 +1,24 @@
-import json
-import os
-from typing import Any, Dict
+import time
+import requests
+from requests.exceptions import RequestException
 
-
-def load_json(file_path: str) -> Dict[str, Any]:
-    """Loads a JSON file and returns its content as a dictionary."""
-    if not os.path.isfile(file_path):
-        raise FileNotFoundError(f"The file {file_path} does not exist.")
-    with open(file_path, 'r', encoding='utf-8') as file:
-        return json.load(file)
-
-
-def save_json(file_path: str, data: Dict[str, Any]) -> None:
-    """Saves a dictionary as a JSON file."""
-    with open(file_path, 'w', encoding='utf-8') as file:
-        json.dump(data, file, ensure_ascii=False, indent=4)
-
-
-def merge_dicts(dict1: Dict[str, Any], dict2: Dict[str, Any]) -> Dict[str, Any]:
-    """Merges two dictionaries recursively."""
-    result = dict1.copy()  
-    for key, value in dict2.items():
-        if key in result and isinstance(result[key], dict) and isinstance(value, dict):
-            result[key] = merge_dicts(result[key], value)
-        else:
-            result[key] = value
-    return result
-
-
-def extract_keys(data: Dict[str, Any], keys: list) -> Dict[str, Any]:
-    """Extracts specified keys from a dictionary, returning a new dictionary."""
-    return {key: data[key] for key in keys if key in data} 
+def retry_request(url, max_attempts=3, wait_time=2):
+    """
+    Attempt to send a GET request to the specified URL with retry logic.
+    :param url: The URL to send the request to.
+    :param max_attempts: The maximum number of attempts (default is 3).
+    :param wait_time: Time to wait between attempts in seconds (default is 2).
+    :return: Response object if successful.
+    """
+    attempt = 0
+    while attempt < max_attempts:
+        try:
+            response = requests.get(url)
+            response.raise_for_status()  # Raise an error for bad responses
+            return response
+        except RequestException as e:
+            attempt += 1
+            print(f"Attempt {attempt} failed: {e}")
+            if attempt < max_attempts:
+                time.sleep(wait_time)
+    raise Exception(f"Failed to retrieve data from {url} after {max_attempts} attempts")
