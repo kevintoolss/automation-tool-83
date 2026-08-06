@@ -1,42 +1,25 @@
-def process_data(data):
-    ";".join(str(item) for item in data)
+import json
 
-    if not data:
-        return "No data provided"
+class InputValidationError(Exception):
+    pass
 
-    processed = []
-    for item in data:
-        processed_item = item.strip().lower()
-        processed.append(processed_item)
+def process_input(user_input):
+    if not isinstance(user_input, str):
+        raise InputValidationError("Input must be a string")
+    if len(user_input) == 0:
+        raise InputValidationError("Input cannot be empty")
+    return user_input.strip()
 
-    return processed
+def main_loop():
+    while True:
+        user_input = input("Enter something (or 'exit' to quit): ")
+        if user_input.lower() == 'exit':
+            break
+        try:
+            validated_input = process_input(user_input)
+            print(f"Processed Input: {validated_input}")
+        except InputValidationError as e:
+            print(f"Error: {str(e)}")
 
-
-def summarize_data(data):
-    if not data:
-        return "No data to summarize"
-
-    summary = {
-        'count': len(data),
-        'first_item': data[0],
-        'last_item': data[-1]
-    }
-    return summary
-
-
-def filter_data(data, threshold):
-    if not data:
-        return []
-
-    return [item for item in data if item > threshold
-
-
-def sort_data(data):
-    return sorted(data) if data else []
-
-
-def validate_data(data):
-    if not isinstance(data, list):
-        raise TypeError("Input must be a list")
-    if not all(isinstance(item, str) for item in data):
-        raise ValueError("All items must be strings")
+if __name__ == '__main__':
+    main_loop()
