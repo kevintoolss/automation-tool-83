@@ -1,38 +1,20 @@
-class CustomException(Exception):
-    """Base class for custom exceptions in this module."""
+import time
+import requests
+
+class NetworkError(Exception):
     pass
 
-class ValidationError(CustomException):
-    """Exception raised for validation errors."""
-    def __init__(self, message: str) -> None:
-        self.message = message
-        super().__init__(self.message)
-
-class DatabaseError(CustomException):
-    """Exception raised for database related errors."""
-    def __init__(self, message: str) -> None:
-        self.message = message
-        super().__init__(self.message)
-
-class NotFoundError(CustomException):
-    """Exception raised when a resource is not found."""
-    def __init__(self, resource_name: str) -> None:
-        self.message = f'{resource_name} not found.'
-        super().__init__(self.message)
-
-# Example usage of exceptions
-if __name__ == '__main__':
-    try:
-        raise ValidationError('Invalid input!')
-    except ValidationError as e:
-        print(e)
-    
-    try:
-        raise NotFoundError('User')
-    except NotFoundError as e:
-        print(e)
-    
-    try:
-        raise DatabaseError('Database connection failed.')
-    except DatabaseError as e:
-        print(e)
+def retry_request(url, max_retries=5, delay=2):
+    retries = 0
+    while retries < max_retries:
+        try:
+            response = requests.get(url)
+            # Check for HTTP errors
+            response.raise_for_status()
+            return response.json()  # Return JSON data on success
+        except requests.exceptions.RequestException as e:
+            print(f"Attempt {retries + 1} failed: {e}")
+            retries += 1
+            time.sleep(delay)  # Wait before retrying
+            
+    raise NetworkError(f"Failed to retrieve data from {url} after {max_retries} attempts")
