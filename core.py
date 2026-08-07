@@ -1,38 +1,26 @@
-import json
+import sys
 
-class DataProcessor:
-    def __init__(self, data):
-        self.data = data
+# Function to validate input
 
-    def to_json(self):
-        """Converts the data to JSON format."""
+def validate_input(user_input):
+    if not isinstance(user_input, str):
+        raise ValueError("Input must be a string.")
+    if len(user_input) == 0:
+        raise ValueError("Input cannot be empty.")
+
+# Main processing loop
+
+def main_processing_loop():
+    while True:
+        user_input = input("Enter some data (type 'exit' to quit): ")
+        if user_input.lower() == 'exit':
+            print("Exiting the program.")
+            break
         try:
-            return json.dumps(self.data)
-        except (TypeError, OverflowError) as e:
-            print(f"Error converting to JSON: {e}")
-            return None
+            validate_input(user_input)
+            print(f"Processing input: {user_input}")
+        except ValueError as e:
+            print(f"Input Error: {e}")
 
-    def from_json(self, json_str):
-        """Loads data from a JSON string."""
-        try:
-            self.data = json.loads(json_str)
-        except json.JSONDecodeError as e:
-            print(f"Error decoding JSON: {e}")
-
-    def add_entry(self, key, value):
-        """Adds a new key-value pair to the data."""
-        if isinstance(self.data, dict):
-            self.data[key] = value
-        else:
-            print("Data is not a dictionary.")
-
-    def get_entry(self, key):
-        """Retrieves a value by key from the data."""
-        return self.data.get(key, None) if isinstance(self.data, dict) else None
-
-    def remove_entry(self, key):
-        """Removes a key-value pair from the data."""
-        if isinstance(self.data, dict) and key in self.data:
-            del self.data[key]
-        else:
-            print("Key not found or data is not a dictionary.")
+if __name__ == '__main__':
+    main_processing_loop()
