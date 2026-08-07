@@ -1,24 +1,35 @@
 import os
 
-# Define global constants
+# Define constant file paths
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-# API constants
-API_TIMEOUT = 30  # seconds
-API_RETRIES = 3  # number of retry attempts
+# Configuration of default settings
+DEFAULT_CONFIG = {
+    'timeout': 30,
+    'max_retries': 5,
+    'api_base_url': 'https://api.example.com/',
+}
 
-# File processing constants
-MAX_FILE_SIZE = 10485760  # 10 MB in bytes
-SUPPORTED_FILE_TYPES = ['.txt', '.csv', '.json']
+# Error messages
+ERROR_MESSAGES = {
+    'not_found': 'Requested resource was not found.',
+    'unauthorized': 'Access denied due to invalid credentials.',
+    'timeout': 'The operation timed out.',
+}
 
-# Logging constants
-LOGGING_LEVEL = 'DEBUG'
-LOGGING_FORMAT = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+# Commonly used data formats
+DATE_FORMAT = '%Y-%m-%d'
+TIME_FORMAT = '%H:%M:%S'
+DATETIME_FORMAT = f'{DATE_FORMAT} {TIME_FORMAT}'
 
-# Database constants
-DB_CONNECTION_STRING = 'sqlite:///mydatabase.db'
-DB_TIMEOUT = 5  # seconds
-
-# Miscellaneous constants
-DEFAULT_LANGUAGE = 'en'
-ITEMS_PER_PAGE = 10
+# API response status codes
+HTTP_STATUS = {
+    'OK': 200,
+    'CREATED': 201,
+    'NO_CONTENT': 204,
+    'BAD_REQUEST': 400,
+    'UNAUTHORIZED': 401,
+    'FORBIDDEN': 403,
+    'NOT_FOUND': 404,
+    'INTERNAL_SERVER_ERROR': 500,
+}
