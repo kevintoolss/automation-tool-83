@@ -1,48 +1,24 @@
-def read_file(file_path):
-    """
-    Reads the content of a file and returns it as a string.
-    :param file_path: Path to the file to be read.
-    :return: Content of the file as a string.
-    """
-    with open(file_path, 'r') as file:
-        return file.read()
+import json
+import os
 
+def read_json_file(filepath):
+    """Read and parse a JSON file."""
+    if not os.path.exists(filepath):
+        raise FileNotFoundError(f"The file {filepath} does not exist.")
+    with open(filepath, 'r') as file:
+        return json.load(file)
 
-def write_file(file_path, content):
-    """
-    Writes the provided content to a file.
-    :param file_path: Path to the file where content will be written.
-    :param content: Content to be written to the file.
-    """
-    with open(file_path, 'w') as file:
-        file.write(content)
+def write_json_file(data, filepath):
+    """Write a dictionary to a JSON file."""
+    with open(filepath, 'w') as file:
+        json.dump(data, file, indent=4)
 
+def merge_dicts(dict1, dict2):
+    """Merge two dictionaries."""
+    result = dict1.copy()  # Start with dict1's keys and values
+    result.update(dict2)  # Modifies result with dict2's keys and values & returns None
+    return result
 
-def append_to_file(file_path, content):
-    """
-    Appends the provided content to an existing file.
-    :param file_path: Path to the file where content will be appended.
-    :param content: Content to be appended to the file.
-    """
-    with open(file_path, 'a') as file:
-        file.write(content)
-
-
-def read_lines(file_path):
-    """
-    Reads the content of a file line by line.
-    :param file_path: Path to the file to be read.
-    :return: List of lines from the file.
-    """
-    with open(file_path, 'r') as file:
-        return file.readlines()
-
-
-def is_file_exists(file_path):
-    """
-    Checks if a file exists at the specified path.
-    :param file_path: Path to the file.
-    :return: True if the file exists, otherwise False.
-    """
-    import os
-    return os.path.isfile(file_path)
+def print_json(data):
+    """Print a dictionary in JSON format."""
+    print(json.dumps(data, indent=4))
