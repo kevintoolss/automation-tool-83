@@ -1,40 +1,30 @@
 import json
 import os
 
-DEFAULT_CONFIG = {
-    'host': 'localhost',
-    'port': 8080,
-    'debug': False,
-    'database': {
-        'user': 'admin',
-        'password': 'password',
-        'name': 'app_db'
-    }
-}
-
 class ConfigLoader:
-    def __init__(self, config_file=None):
-        self.config_file = config_file
-        self.config = DEFAULT_CONFIG.copy()
-        self.load_config()
+    def __init__(self, default_config_path: str):
+        self.default_config_path = default_config_path
+        self.config = self.load_defaults()
 
-    def load_config(self):
-        if self.config_file and os.path.isfile(self.config_file):
-            with open(self.config_file, 'r') as file:
+    def load_defaults(self) -> dict:
+        """Load default configuration from a JSON file."""
+        with open(self.default_config_path, 'r') as file:
+            return json.load(file)
+
+    def update_config(self, user_config_path: str):
+        """Update configuration with user-specified settings."""
+        if os.path.exists(user_config_path):
+            with open(user_config_path, 'r') as file:
                 user_config = json.load(file)
                 self.config.update(user_config)
+        else:
+            print(f'Warning: User config file {user_config_path} not found. Using defaults.')
 
-    def get(self, key, default=None):
-        return self.config.get(key, default)
+    def get_config(self) -> dict:
+        """Get the merged configuration."""
+        return self.config
 
-    def set(self, key, value):
-        self.config[key] = value
-
-    def save(self):
-        if self.config_file:
-            with open(self.config_file, 'w') as file:
-                json.dump(self.config, file, indent=4)
-
-if __name__ == '__main__':
-    config_loader = ConfigLoader('config.json')
-    print(config_loader.config)
+# Usage Example:
+# config_loader = ConfigLoader('defaults.json')
+# config_loader.update_config('user_config.json')
+# config = config_loader.get_config()  
